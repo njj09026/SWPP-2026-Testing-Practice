@@ -21,6 +21,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 
 @RunWith(AndroidJUnit4::class)
@@ -203,7 +204,7 @@ class TasksListBindingsTest {
 
     @Test fun tasksList_checkThenUncheckWithoutDate_showsClearThenNoLabel() {
         // Given the only task is active and has no due date
-        repository.addTasks(Task("TITLE1", "DESCRIPTION1", id = "id1"))
+        runBlocking { repository.saveTask(Task("TITLE1", "DESCRIPTION1", id = "id1")) }
         launchFragmentInContainer<TasksFragment>(themeResId = R.style.AppTheme)
         // When checked, then the row shows CLEAR
         onView(withId(R.id.complete_checkbox)).perform(click())
@@ -216,7 +217,7 @@ class TasksListBindingsTest {
 
     @Test fun tasksList_checkThenUncheckWithDate_showsDMinus3ThenClearThenDMinus3() {
         // Given the only task is active and due in three days
-        repository.addTasks(Task("TITLE1", "DESCRIPTION1", id = "id1", dueDate = LocalDate.now().plusDays(3)))
+        runBlocking { repository.saveTask(Task("TITLE1", "DESCRIPTION1", id = "id1", dueDate = LocalDate.now().plusDays(3))) }
         launchFragmentInContainer<TasksFragment>(themeResId = R.style.AppTheme)
         onView(withId(R.id.due_date_text)).check(matches(withText("D-3")))
         onView(withId(R.id.due_date_text)).check(matches(isDisplayed()))
